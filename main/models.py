@@ -38,10 +38,16 @@ class Order(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
-    def my_url_field(self):
+    def total(self):
+        sum = 0
+        for i in self.items.all():
+            sum += i.price
+        return sum
+
+    def my_field(self):
         a = ''
         for b in self.items.all():
             a += ", " + b.name
         return a[1:]
 
-    my_url_field.short_description = 'Column description'
+    my_field.short_description = 'Column description'

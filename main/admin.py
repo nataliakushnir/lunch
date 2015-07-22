@@ -16,7 +16,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'date',
-        'my_url_field'
+        'my_field',
+        'total',
     )
 
 
