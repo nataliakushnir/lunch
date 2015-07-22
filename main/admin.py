@@ -1,4 +1,29 @@
 from django.contrib import admin
+<<<<<<< HEAD
+from main.models import Order, Dish, Category
+
+
+class DishAdmin(admin.ModelAdmin):
+    model = Dish
+    list_display = (
+        'name',
+        'category',
+        'price',
+    )
+
+
+class OrderAdmin(admin.ModelAdmin):
+    model = Order
+    list_display = (
+        'user',
+        'date',
+        'my_url_field'
+    )
+
+
+admin.site.register(Category)
+admin.site.register(Dish, DishAdmin)
+=======
 from .models import Items, Orders, Order
 # Register your models here.
 
@@ -17,4 +42,5 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(Items, ItemsAdmin)
 admin.site.register(Orders, OrdersAdmin)
+>>>>>>> da983a13e6069f377d4068c3be960c08e95239dd
 admin.site.register(Order, OrderAdmin)
