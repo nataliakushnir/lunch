@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.template import Context
+from django.shortcuts import render_to_response
+from django.template.loader import get_template
 
-# Create your views here.
+
+def add_order(request):
+    view = 'yes'
+    return render_to_response('main.html', {'add': view})
