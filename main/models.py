@@ -11,7 +11,6 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-
 class Dish(models.Model):
     class Meta:
         verbose_name_plural = "Dishes"
