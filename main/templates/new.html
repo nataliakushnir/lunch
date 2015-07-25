@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% block user_content %}
+
+    {#        <form action="{% url 'main.views.new' question.id %}" method="post">#}
+    {#            {% csrf_token %}#}
+    {#            {% for choice in question.choice_set.all %}#}
+    {#                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>#}
+    {#                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br/>#}
+    {#            {% endfor %}#}
+    {#            <input type="submit" value="Vote"/>#}
+    {#        </form>#}
+
+    {% for category_title, dish_list in dishes.items %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="row text-center"><h3>{{ category_title }}</h3></div>
+
+                <div class="row">
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3">Назва</div>
+                    <div class="col-xs-1">Вихід</div>
+                    <div class="col-xs-5">Опис</div>
+                    <div class="col-xs-1">Ціна (грн).</div>
+                </div>
+
+                {% for dish in dish_list %}
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <input type="checkbox" name="published"/>
+                        </div>
+                        <div class="col-xs-3">{{ dish.name }}</div>
+                        <div class="col-xs-1">{{ dish.weight }}</div>
+                        <div class="col-xs-5">{{ dish.description }}</div>
+                        <div class="col-xs-1">{{ dish.price }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

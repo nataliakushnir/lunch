@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block bootstrap3_content %}
+    <header>
+
+    </header>
+    <content>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3">
+                    {% include 'include/menu.html' %}
+                </div>
+                <div class="col-xs-9">
+                    {% block user_content %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </content>
 
 {% endblock %}
 

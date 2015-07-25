@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+{% block user_content %}
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Date</th>
+            <th>Total price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <th scope="row">{{ order.id }}</th>
+                <td>{{ order.date }}</td>
+                <td>{{ order.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

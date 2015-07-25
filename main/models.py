@@ -6,6 +6,7 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
 
+
     title = models.CharField(max_length=140)
 
     def __str__(self):
@@ -36,6 +37,9 @@ class Order(models.Model):
     date = models.DateField()
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username
 
     def total(self):
         sum = 0
