@@ -20,7 +20,6 @@ class OrderAdmin(admin.ModelAdmin):
         'total',
     )
 
-
 admin.site.register(Category)
 admin.site.register(Dish, DishAdmin)
 admin.site.register(Order, OrderAdmin)
