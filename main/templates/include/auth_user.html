@@ -1,6 +1,6 @@
 <div class="nav navbar-nav navbar-right">
         <ul class="text-right">
-            {% if username %}
+            {% if user.is_authenticated %}
             <li><a href="/auth/logout">Exit</a></li>
             {% else %}
             <li><a href="/auth/login">Sign in</a></li>

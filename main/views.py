@@ -14,6 +14,7 @@ def index(request):
 
 def new(request):
     dishes = Dish.objects.all()
+    user = request.user
     info = {}
     for dish in dishes:
         if dish.category.title in info:
@@ -28,6 +29,7 @@ def new(request):
     args['get_user'] = auth.get_user(request).username
     args['dishes'] = info
     args['form'] = order_form
+    args['user'] = user
     return render_to_response('new.html', args)
 
 
@@ -38,7 +40,9 @@ def history(request):
             form.save()
             return redirect('/history/')
     return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
-                                                     'get_user': auth.get_user(request).username})
+                                                     'get_user': auth.get_user(request).username,
+                                                     'user': request.user,
+                                                     })
 
 
 def login(request):
@@ -74,7 +78,7 @@ def register(request):
             new_user = auth.authenticate(username=new_user_form.cleaned_data['username'],
                                          password=new_user_form.cleaned_data['password2'])
             auth.login(request, new_user)
-            return redirect('../history/')
+            return redirect('/history/')
         else:
             args['form'] = new_user_form
     return render_to_response('register.html', args)

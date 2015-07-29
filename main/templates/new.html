@@ -1,14 +1,6 @@
 {% extends 'main.html' %}
 {% block user_content %}
 
-    {#        <form action="{% url 'main.views.new' question.id %}" method="post">#}
-    {#            {% csrf_token %}#}
-    {#            {% for choice in question.choice_set.all %}#}
-    {#                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>#}
-    {#                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br/>#}
-    {#            {% endfor %}#}
-    {#            <input type="submit" value="Vote"/>#}
-    {#        </form>#}
 <form action="/history/" method="post">
     {% csrf_token %}
     {% for category_title, dish_list in dishes.items %}
@@ -27,7 +19,7 @@
                 {% for dish in dish_list %}
                     <div class="row">
                         <div class="col-xs-1">
-                            <input type="radio" name="{{ dish.name }}" value="{{ dish.id }}"/>
+                            <input type="checkbox" name="dish_{{ dish.id }}" value="yes"/>
                         </div>
                         <div class="col-xs-3">{{ dish.name }}</div>
                         <div class="col-xs-1">{{ dish.weight }}</div>
