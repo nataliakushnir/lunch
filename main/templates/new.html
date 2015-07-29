@@ -9,7 +9,8 @@
     {#            {% endfor %}#}
     {#            <input type="submit" value="Vote"/>#}
     {#        </form>#}
-
+<form action="/history/" method="post">
+    {% csrf_token %}
     {% for category_title, dish_list in dishes.items %}
         <div class="row">
             <div class="col-xs-12">
@@ -26,7 +27,7 @@
                 {% for dish in dish_list %}
                     <div class="row">
                         <div class="col-xs-1">
-                            <input type="checkbox" name="published"/>
+                            <input type="radio" name="{{ dish.name }}" value="{{ dish.id }}"/>
                         </div>
                         <div class="col-xs-3">{{ dish.name }}</div>
                         <div class="col-xs-1">{{ dish.weight }}</div>
@@ -34,9 +35,11 @@
                         <div class="col-xs-1">{{ dish.price }}</div>
                     </div>
                 {% endfor %}
-
             </div>
         </div>
     {% endfor %}
+    {{ form }}
+    <input type="submit" class="button" value="add_order">
+</form>
 
 {% endblock %}
