@@ -1,15 +1,14 @@
 {% extends 'main.html' %}
-
 {% block user_content %}
-
-<div class="container">
-    <div class="row">
-        <div class="col-xs-12"></div>
-        <form action="/auth/register/" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" class="button" value="Register"/>
-        </form>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-2 center">
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    {{ user_register }}
+                    <input class="button" type="submit" value="Register">
+                </form>
+            </div>
+        </div>
     </div>
-</div>
 {% endblock %}

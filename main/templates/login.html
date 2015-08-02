@@ -1,25 +1,20 @@
 {% extends 'main.html' %}
-
 {% block user_content %}
-<div class="container">
-<div class="row">
-<div class="col-xs-3 offset"></div>
-<div class="col-xs-9">
-    <form action="/auth/login/" method="post">
-        {% csrf_token %}
-            <label for="username">User Name</label>
-            <input type="text" name="username" id="username"/>
-            <label for="password">Password</label>
-            <input type="text" name="password" id="password"/>
 
-        {% if login_error %}
-        <label class="error"{{ login_error }}></label>
-        {% endif %}
-        <input type="submit" class="button" value="Login"/>
-        <label for="register"><a href="/auth/register/">register</a></label>
-    </form>
-</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <form action="login" method="post">
+                    {% csrf_token %}
+                    {{ new_user }}
+                    {{ login_error }}
+                    <input type="submit" class="button" value="Login">
+                    <a href="{% url 'register' %}">Зареєструватися</a>
+                </form>
+            </div>
+        </div>
     </div>
-    </div>
+
+
 
 {% endblock %}

@@ -3,9 +3,10 @@ from .views import *
 
 urlpatterns = [
     url(r'^$', 'main.views.index', name='index'),
-    url(r'^history/', 'main.views.history', name='order_history'),
-    url(r'^new/', 'main.views.new', name='new_order'),
-    url(r'^auth/login/', "main.views.login",),
-    url(r'^auth/logout/', "main.views.logout",),
-    url(r'^auth/register/', "main.views.register",)
+    url(r'^home/history/', 'main.views.history', name='order_history'),
+    url(r'^home/new/', 'main.views.new', name='new_order'),
+    url(r'^login/', 'main.views.login', name='sign_in'),
+    url(r'^logout/', 'main.views.logout', name='logout'),
+    url(r'^register/', 'main.views.register', name='register'),
+    url(r'^home/', 'main.views.home', name='home'),
 ]

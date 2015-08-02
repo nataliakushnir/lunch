@@ -1,0 +1,9 @@
+<div class="nav navbar-nav navbar-right">
+    <ul class="text-right">
+        {% if username %}
+            <li><a href="/logout/">Exit({{ username }})</a></li>
+        {% else %}
+            <li><a href="/login/">Sign in</a></li>
+        {% endif %}
+    </ul>
+</div>

@@ -1,5 +1,6 @@
 from django.contrib import auth
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -9,12 +10,15 @@ from main.models import Order, Dish
 
 
 def index(request):
-    return HttpResponseRedirect(reverse('order_history'))
+    if request.user.is_authenticated():
+        return redirect('home')
+    else:
+        return render_to_response('index.html')
 
 
 def new(request):
+    new_order = OrderForm
     dishes = Dish.objects.all()
-    user = request.user
     info = {}
     for dish in dishes:
         if dish.category.title in info:
@@ -22,63 +26,68 @@ def new(request):
         else:
             info[dish.category.title] = []
             info[dish.category.title].append(dish)
-
-    order_form = OrderForm
     args = {}
     args.update(csrf(request))
-    args['get_user'] = auth.get_user(request).username
+    args['new_order'] = new_order
     args['dishes'] = info
-    args['form'] = order_form
-    args['user'] = user
+    args['username'] = auth.get_user(request).username
     return render_to_response('new.html', args)
 
 
 def history(request):
+    user = request.user
     if request.POST:
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/history/')
-    return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
-                                                     'get_user': auth.get_user(request).username,
-                                                     'user': request.user,
-                                                     })
-
+        new_order_form = OrderForm(request.POST)
+        if new_order_form.is_valid():
+            new_order_form.save()
+            return redirect('order_history')
+        else:
+            return redirect('new_order')
+    return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=user.id),
+                              'username': request.user.username})
 
 def login(request):
+    new_user = AuthenticationForm
     args = {}
     args.update(csrf(request))
+    args['new_user'] = new_user
+    args['username'] = auth.get_user(request).username
     if request.POST:
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = auth.authenticate(username=username, password=password)
         if user is not None:
             auth.login(request, user)
-            return redirect('/history/')
+            return redirect('home')
         else:
             args['login_error'] = 'User is not found'
-            return render_to_response('login.html', args)
-    else:
-        return render_to_response('login.html', args)
+            return redirect('login')
+    return render_to_response('login.html', args)
 
 
 def logout(request):
     auth.logout(request)
-    return redirect('/history/')
+    return redirect('/')
 
 
 def register(request):
     args = {}
     args.update(csrf(request))
-    args['form'] = UserCreationForm()
+    args['user_register'] = UserCreationForm()
     if request.POST:
-        new_user_form = UserCreationForm(request.POST)
-        if new_user_form.is_valid():
-            new_user_form.save()
-            new_user = auth.authenticate(username=new_user_form.cleaned_data['username'],
-                                         password=new_user_form.cleaned_data['password2'])
+        new_user = UserCreationForm(request.POST)
+        if new_user.is_valid():
+            new_user.save()
+            new_user = auth.authenticate(username=new_user.cleaned_data['username'], password=new_user.cleaned_data['password2'])
             auth.login(request, new_user)
-            return redirect('/history/')
+            return redirect('new_order')
         else:
-            args['form'] = new_user_form
+            args['user_register'] = new_user
     return render_to_response('register.html', args)
+
+
+def home(request):
+    if request.user.is_authenticated():
+        return render_to_response('home.html', {'username': auth.get_user(request).username})
+    else:
+        return redirect('login')

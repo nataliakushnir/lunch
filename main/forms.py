@@ -7,4 +7,4 @@ class OrderForm(ModelForm):
     class Meta():
         model = Order
 
-        fields = ('date',)
+        fields = ('user', 'date',)

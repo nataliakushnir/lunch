@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var enableDays = ['2015-07-30', '2015-07-31'];
+    var enableDays = ['2015-08-01', '2015-08-31'];
 
     function enableAllTheseDays(date) {
         var sdate = $.datepicker.formatDate('yy-mm-dd', date);
