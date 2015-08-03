@@ -6,11 +6,11 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
 
-
     title = models.CharField(max_length=140)
 
     def __str__(self):
         return self.title
+
 
 class Dish(models.Model):
     class Meta:
@@ -20,7 +20,6 @@ class Dish(models.Model):
     category = models.ForeignKey(Category)
     description = models.TextField(max_length=200, blank=True)
     weight = models.FloatField(max_length=6)
-    quantity = models.SmallIntegerField(max_length=2, default=1)
     price = models.FloatField(max_length=6)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)

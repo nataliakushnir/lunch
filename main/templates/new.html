@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'layouts/main_logged_in.html' %}
 {% block user_content %}
 
 <form action="{% url 'order_history' %}" method="post">
@@ -12,7 +12,6 @@
                     <div class="col-xs-1"></div>
                     <div class="col-xs-3">Назва</div>
                     <div class="col-xs-1">Вихід</div>
-                    <div class="col-xs-1">Кількість</div>
                     <div class="col-xs-5">Опис</div>
                     <div class="col-xs-1">Ціна (грн).</div>
                 </div>
@@ -24,7 +23,6 @@
                         </div>
                         <div class="col-xs-3">{{ dish.name }}</div>
                         <div class="col-xs-1">{{ dish.weight }}</div>
-                        <div class="col-xs-1">{{ dish.quantity }}</div>
                         <div class="col-xs-5">{{ dish.description }}</div>
                         <div class="col-xs-1">{{ dish.price }}</div>
                     </div>

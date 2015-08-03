@@ -1,20 +1,29 @@
-{% extends 'main.html' %}
+{% extends 'layouts/main_not_logged.html' %}
 {% block user_content %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <form action="login" method="post">
-                    {% csrf_token %}
-                    {{ new_user }}
-                    {{ login_error }}
-                    <input type="submit" class="button" value="Login">
-                    <a href="{% url 'register' %}">Зареєструватися</a>
-                </form>
-            </div>
+
+    {% if custom_error %}
+        <div class="alert alert-danger">
+            <p>{{ custom_error }}</p>
         </div>
-    </div>
+    {% endif %}
 
 
+    <form action="/login/" method="post">
+        {% csrf_token %}
 
+        {% for field in form.visible_fields %}
+
+            {% if field.errors %}
+                <div class="alert alert-danger">
+                    <p>{{ field.errors }}</p>
+                </div>
+            {% endif %}
+
+            {{ field }}
+            <br/>
+        {% endfor %}
+
+        <input type="submit" class="btn btn-primary btn-block" value="Login">
+    </form>
 {% endblock %}
