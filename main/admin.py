@@ -14,7 +14,6 @@ class DishAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     model = Order
     list_display = (
-        'user',
         'date',
         'my_field',
         'total',
