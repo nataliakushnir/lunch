@@ -7,7 +7,7 @@ from main.models import Order
 class OrderForm(ModelForm):
     class Meta:
         model = Order
-        fields = ('user', 'date',)
+        fields = ('date',)
 
 
 class LoginUserForm(forms.Form):

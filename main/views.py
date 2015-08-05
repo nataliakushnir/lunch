@@ -38,7 +38,6 @@ def new(request):
 
 @only_auth()
 def history(request):
-    user = request.user
     if request.POST:
         new_order_form = OrderForm(request.POST)
         if new_order_form.is_valid():
@@ -46,7 +45,7 @@ def history(request):
             return redirect('order_history')
         else:
             return redirect('new_order')
-    return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=user.id),
+    return render_to_response('order_history.html', {'orders': Order.objects.all(),
                                                      'username': request.user.username})
 
 
