@@ -1,2 +1,9 @@
 {% extends 'bootstrap3/bootstrap3.html' %}
 {% load staticfiles %}
+
+{% block bootstrap3_extra_script %}
+    <link href="{% static 'jquery-ui.css' %}" rel="stylesheet">
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'scripts.js' %}"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+{% endblock %}

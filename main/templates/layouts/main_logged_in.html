@@ -1,29 +1,21 @@
 {% extends 'layouts/base.html' %}
 {% load staticfiles %}
 {% block bootstrap3_content %}
-    <br />
-    <br />
     <div class="container">
         <div class="row">
-            <div class="col-xs-8 col-xs-offset-2">
-                <div class="row">
-                    <div class="col-xs-3">
-                        {% include 'include/menu.html' %}
-                    </div>
-                        <div class="col-xs-9">
-                        {% block user_content %}
-                        {% endblock %}
-                    </div>
-
-                </div>
+            <div class="col-xs-2 col-xs-1-offser">
+                <ul class="list-unstyled">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    {% include 'include/menu.html' %}
+                    {% include 'include/menu_logged_in.html' %}
+                </ul>
             </div>
         </div>
     </div>
+
 {% endblock %}
 
-
-{% block bootstrap3_extra_script %}
-    <link href="{% static "jquery-ui.css" %}" rel="stylesheet">
-    <script type="text/javascript" src="{% static "scripts.js" %}"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-{% endblock %}

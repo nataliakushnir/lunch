@@ -3,19 +3,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response, redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
-from main.forms import OrderForm, LoginUserForm
-from main.models import Order, Dish
+from .forms import OrderForm, LoginUserForm, RegisterForm
+from .models import Order, Dish
 from middlewares import CustomAuthMiddleware
+
 
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
-
 def index(request):
-    if request.user.is_authenticated():
-        return redirect('home')
-    else:
-        return redirect('login')
-
+    return redirect('home')
 
 @only_auth()
 def new(request):
@@ -46,7 +42,7 @@ def history(request):
         else:
             return redirect('new_order')
     return render_to_response('order_history.html', {'orders': Order.objects.all(),
-                                                     'username': request.user.username})
+                                                     'username': request.user.username,})
 
 
 def login(request):
@@ -54,39 +50,40 @@ def login(request):
     args.update(csrf(request))
 
     if request.method == 'POST':
-        form = LoginUserForm(request.POST)
-        if form.is_valid():
+        login_form = LoginUserForm(request.POST)
+        if login_form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = auth.authenticate(username=username, password=password)
             if user is not None:
                 auth.login(request, user)
-                return redirect('index')
+                return redirect('home')
             else:
                 args['custom_error'] = 'Login and/or password are wrong'
-        args['form'] = form
+        args['form'] = login_form
         return render(request, 'login.html', args)
     else:
-        form = LoginUserForm()
-        args['form'] = form
+        login_form = LoginUserForm()
+        args['login_form'] = login_form
     return render(request, 'login.html', args)
 
 
 def logout(request):
     auth.logout(request)
-    return redirect('index')
+    return redirect('home')
 
 
 def register(request):
     args = {}
     args.update(csrf(request))
-    args['user_register'] = UserCreationForm()
+    args['user_register'] = RegisterForm()
     if request.POST:
         new_user = UserCreationForm(request.POST)
         if new_user.is_valid():
             new_user.save()
             new_user = auth.authenticate(username=new_user.cleaned_data['username'],
-                                         password=new_user.cleaned_data['password2'])
+                                         password=new_user.cleaned_data['password2'],
+                                         )
             auth.login(request, new_user)
             return redirect('new_order')
         else:
@@ -96,6 +93,6 @@ def register(request):
 
 def home(request):
     if request.user.is_authenticated():
-        return render_to_response('home.html', {'username': auth.get_user(request).username})
+        return render_to_response('layouts/main_logged_in.html')
     else:
-        return redirect('login')
+        return render_to_response('layouts/main_not_logged.html')

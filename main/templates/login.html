@@ -1,18 +1,32 @@
-{% extends 'layouts/main_not_logged.html' %}
-{% block user_content %}
+{% extends 'layouts/main_logged_in.html' %}}
+{% block bootstrap3_content %}
 
-
-    {% if custom_error %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-2 col-xs-1-offser">
+                <ul class="list-unstyled">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    {% include 'include/menu_not_logged.html' %}
+                </ul>
+            </div>
+                    <br/>
+                    <br/>
+                    <br/>
+        <div class="col-xs-8">
+        <div class="col-xs-6 col-xs-offset-3 ">
+            {% if custom_error %}
         <div class="alert alert-danger">
             <p>{{ custom_error }}</p>
         </div>
     {% endif %}
-
-
     <form action="/login/" method="post">
         {% csrf_token %}
 
-        {% for field in form.visible_fields %}
+        {% for field in login_form.visible_fields %}
 
             {% if field.errors %}
                 <div class="alert alert-danger">
@@ -26,4 +40,9 @@
 
         <input type="submit" class="btn btn-primary btn-block" value="Login">
     </form>
+        </div>
+    </div>
+</div>
+</div>
+
 {% endblock %}
