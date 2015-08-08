@@ -11,7 +11,10 @@ from middlewares import CustomAuthMiddleware
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 def index(request):
-    return redirect('home')
+    if request.user.is_authenticated():
+        return redirect('home')
+    else:
+        return redirect('/login')
 
 @only_auth()
 def new(request):
@@ -60,7 +63,8 @@ def login(request):
                 return redirect('home')
             else:
                 args['custom_error'] = 'Login and/or password are wrong'
-        args['form'] = login_form
+        args['login_form'] = login_form
+        a=1
         return render(request, 'login.html', args)
     else:
         login_form = LoginUserForm()
@@ -95,4 +99,4 @@ def home(request):
     if request.user.is_authenticated():
         return render_to_response('layouts/main_logged_in.html')
     else:
-        return render_to_response('layouts/main_not_logged.html')
+        return redirect('login')
