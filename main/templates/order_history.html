@@ -2,24 +2,46 @@
 {% block user_content %}
 
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>Date</th>
-            <th>Total price</th>
-        </tr>
-        </thead>
-        <tbody>
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {% for order in orders %}
-            <tr>
-                <th scope="row">{{ order.id }}</th>
-                <td>{{ order.date }}</td>
-                <td>{{ order.total }}</td>
-            </tr>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-{{ order.id }}">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapse-{{ order.id }}" aria-expanded="false"
+                           aria-controls="collapse-{{ order.id }}">
+                            №{{ order.id }}, {{ order.date }}, загальна сума - {{ order.total }}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-{{ order.id }}" class="panel-collapse collapse" role="tabpanel"
+                     aria-labelledby="heading-{{ order.id }}">
+                    <div class="panel-body">
+                        <table class="table">
+                            <caption>Дата створення замовлення: {{ order.modified_date }}</caption>
+                            <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for dish in order.items.all %}
+                                <tr>
+                                    <td>{{ dish.name }}</td>
+                                    <td>{{ dish.price }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
+    </div>
+
 
 
 
