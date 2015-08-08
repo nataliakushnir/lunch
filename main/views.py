@@ -1,5 +1,7 @@
+import datetime
 from django.contrib import auth
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response, redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
@@ -18,6 +20,19 @@ def index(request):
 
 @only_auth()
 def new(request):
+    args = {}
+    if request.POST:
+        order = Order()
+        order.user = request.user
+        order.date = "2015-08-08"
+        order.save()
+
+        for key in request.POST:
+            if "dish_" in key:
+                item_id = int(key[5:])
+                order.items.add(Dish.objects.get(id=item_id))
+                args['alert'] = "Your order created successfully!"
+
     new_order = OrderForm
     dishes = Dish.objects.all()
     info = {}
@@ -27,24 +42,17 @@ def new(request):
         else:
             info[dish.category.title] = []
             info[dish.category.title].append(dish)
-    args = {}
+
     args.update(csrf(request))
     args['new_order'] = new_order
     args['dishes'] = info
-    args['username'] = auth.get_user(request).username
+    args['user'] = auth.get_user(request)
     return render_to_response('new.html', args)
 
 
 @only_auth()
 def history(request):
-    if request.POST:
-        new_order_form = OrderForm(request.POST)
-        if new_order_form.is_valid():
-            new_order_form.save()
-            return redirect('order_history')
-        else:
-            return redirect('new_order')
-    return render_to_response('order_history.html', {'orders': Order.objects.all(),
+    return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
                                                      'username': request.user.username,})
 
 

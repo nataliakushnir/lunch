@@ -1,57 +1,67 @@
 {% extends 'layouts/main_logged_in.html' %}
 {% block bootstrap3_content %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-xs-2 col-xs-1-offser">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-2 col-xs-1-offser">
                 <ul class="list-unstyled">
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+                    {% block alert %}
+
+                        {% if alert %}
+                            {{ alert }}
+                        {% else %}
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        {% endif %}
+                    {% endblock %}
                     {% include 'include/menu.html' %}
                     {% include 'include/menu_logged_in.html' %}
                 </ul>
             </div>
-        <div class="col-xs-6 col-xs-offset-1">
-            <br/>
-            <br/>
-            <br/>
-<form action="{% url 'order_history' %}" method="post">
-    {% csrf_token %}
-    {% for category_title, dish_list in dishes.items %}
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="row text-center"><h3>{{ category_title }}</h3></div>
+            <div class="col-xs-6 col-xs-offset-1">
                 <br/>
-                <div class="row">
-                    <div class="col-xs-1"></div>
-                    <div class="col-xs-3">Назва</div>
-                    <div class="col-xs-1">Вихід</div>
-                    <div class="col-xs-5">Опис</div>
-                    <div class="col-xs-2">Ціна (грн).</div>
-                </div>
+                <br/>
                 <br/>
 
-                {% for dish in dish_list %}
-                    <div class="row">
-                        <div class="col-xs-1">
-                            <input type="checkbox" name="dish_{{ dish.id }}" value="yes"/>
+                <form action="{% url 'new_order' %}" method="post">
+                    {% csrf_token %}
+                    {% for category_title, dish_list in dishes.items %}
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row text-center"><h3>{{ category_title }}</h3></div>
+                                <br/>
+
+                                <div class="row">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-3">Назва</div>
+                                    <div class="col-xs-1">Вихід</div>
+                                    <div class="col-xs-5">Опис</div>
+                                    <div class="col-xs-2">Ціна (грн).</div>
+                                </div>
+                                <br/>
+
+                                {% for dish in dish_list %}
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <input type="checkbox" name="dish_{{ dish.id }}" value="yes"/>
+                                        </div>
+                                        <div class="col-xs-3">{{ dish.name }}</div>
+                                        <div class="col-xs-1">{{ dish.weight }}</div>
+                                        <div class="col-xs-5">{{ dish.description }}</div>
+                                        <div class="col-xs-1">{{ dish.price }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="col-xs-3">{{ dish.name }}</div>
-                        <div class="col-xs-1">{{ dish.weight }}</div>
-                        <div class="col-xs-5">{{ dish.description }}</div>
-                        <div class="col-xs-1">{{ dish.price }}</div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+
+                    {{ new_order }}
+                    <input type="hidden" id="id_user" name="user" value="{{ user.id }}">
+                    <input type="submit" class="btn btn-primary" value="Зробити замовлення"/>
+                </form>
             </div>
         </div>
-    {% endfor %}
-    {{ new_order }}
-    <input type="submit" class="btn btn-primary" value="Зробити замовлення"/>
-</form>
-    </div>
-</div>
     </div>
 {% endblock %}

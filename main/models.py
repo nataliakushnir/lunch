@@ -36,7 +36,7 @@ class Order(models.Model):
     date = models.DateField()
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-
+    user = models.ForeignKey(User, default=1)
 
     def total(self):
         sum = 0
