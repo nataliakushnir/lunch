@@ -1,16 +1,15 @@
-import datetime
 from django.contrib import auth
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.core.context_processors import csrf
+from django.core.exceptions import ValidationError
 from django.shortcuts import render_to_response, redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegisterForm
 from .models import Order, Dish
 from middlewares import CustomAuthMiddleware
 
-
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
+
 
 def index(request):
     if request.user.is_authenticated():
@@ -18,20 +17,27 @@ def index(request):
     else:
         return redirect('/login')
 
+
 @only_auth()
 def new(request):
     args = {}
     if request.POST:
         order = Order()
         order.user = request.user
-        order.date = "2015-08-08"
-        order.save()
+        order.date = request.POST.get("date", )
+        try:
+            order.save()
+            for key in request.POST:
+                if "dish_" in key:
+                    item_id = int(key[5:])
+                    order.items.add(Dish.objects.get(id=item_id))
+                    args['alert_success'] = "Your order created successfully!"
+                else:
+                    args['custom_alert'] = "Any item not selected"
+        except ValidationError:
+            args['custom_alert'] = "Please enter correct date"
 
-        for key in request.POST:
-            if "dish_" in key:
-                item_id = int(key[5:])
-                order.items.add(Dish.objects.get(id=item_id))
-                args['alert'] = "Your order created successfully!"
+
 
     new_order = OrderForm
     dishes = Dish.objects.all()
@@ -53,7 +59,7 @@ def new(request):
 @only_auth()
 def history(request):
     return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
-                                                     'username': request.user.username,})
+                                                     'username': request.user.username, })
 
 
 def login(request):
@@ -72,7 +78,6 @@ def login(request):
             else:
                 args['custom_error'] = 'Login and/or password are wrong'
         args['login_form'] = login_form
-        a=1
         return render(request, 'login.html', args)
     else:
         login_form = LoginUserForm()

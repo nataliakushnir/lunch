@@ -3,19 +3,13 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-xs-2 col-xs-1-offser">
+            <div class="col-xs-2 col-xs-offset-1">
                 <ul class="list-unstyled">
-                    {% block alert %}
-
-                        {% if alert %}
-                            {{ alert }}
-                        {% else %}
-                            <br/>
-                            <br/>
-                            <br/>
-                            <br/>
-                        {% endif %}
-                    {% endblock %}
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                     {% include 'include/menu.html' %}
                     {% include 'include/menu_logged_in.html' %}
                 </ul>
@@ -24,7 +18,17 @@
                 <br/>
                 <br/>
                 <br/>
-
+                {% block alert %}
+                    {% if alert_success %}
+                        <div class="alert alert-success text-center">
+                            {{ alert_success }}
+                        </div>
+                    {% elif custom_alert %}
+                        <div class="alert alert-danger text-center">
+                            {{ custom_alert }}
+                        </div>
+                    {% endif %}
+                {% endblock %}
                 <form action="{% url 'new_order' %}" method="post">
                     {% csrf_token %}
                     {% for category_title, dish_list in dishes.items %}
@@ -56,8 +60,12 @@
                             </div>
                         </div>
                     {% endfor %}
-
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                     {{ new_order }}
+
                     <input type="hidden" id="id_user" name="user" value="{{ user.id }}">
                     <input type="submit" class="btn btn-primary" value="Зробити замовлення"/>
                 </form>

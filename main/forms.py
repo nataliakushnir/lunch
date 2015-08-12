@@ -1,18 +1,16 @@
+import datetime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import validate_slug
-from django.db.transaction import commit
-from django.forms import ModelForm
-from .models import Order
+from django.forms import DateInput
 
 
-class OrderForm(ModelForm):
-    class Meta:
-        model = Order
-        fields = ('date',)
-
-        labels = {'date': 'Оберіть дату замовлення'}
+class OrderForm(forms.Form):
+    date = forms.DateField(initial=datetime.date.today(),
+                           label="Оберіть дату замовлення",
+                           widget=DateInput(format='%Y-%m-%d'),
+                           input_formats=['%Y-%m-%d'],)
 
 
 class LoginUserForm(forms.Form):
