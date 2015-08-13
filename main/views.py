@@ -1,10 +1,9 @@
 from django.contrib import auth
-from django.contrib.auth.forms import UserCreationForm
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
 from django.shortcuts import render_to_response, redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
-from .forms import OrderForm, LoginUserForm, RegisterForm
+from .forms import OrderForm, LoginUserForm, RegistrationForm
 from .models import Order, Dish
 from middlewares import CustomAuthMiddleware
 
@@ -36,9 +35,6 @@ def new(request):
                     args['custom_alert'] = "Any item not selected"
         except ValidationError:
             args['custom_alert'] = "Please enter correct date"
-
-
-
     new_order = OrderForm
     dishes = Dish.objects.all()
     info = {}
@@ -74,7 +70,7 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user is not None:
                 auth.login(request, user)
-                return redirect('home')
+                return redirect('new_order')
             else:
                 args['custom_error'] = 'Login and/or password are wrong'
         args['login_form'] = login_form
@@ -85,27 +81,30 @@ def login(request):
     return render(request, 'login.html', args)
 
 
-def logout(request):
-    auth.logout(request)
-    return redirect('home')
-
-
 def register(request):
     args = {}
     args.update(csrf(request))
-    args['user_register'] = RegisterForm()
     if request.POST:
-        new_user = UserCreationForm(request.POST)
-        if new_user.is_valid():
-            new_user.save()
-            new_user = auth.authenticate(username=new_user.cleaned_data['username'],
-                                         password=new_user.cleaned_data['password2'],
-                                         )
+        register_form = RegistrationForm(request.POST)
+        if register_form.is_valid():
+            register_form.save()
+            new_user = auth.authenticate(username=register_form.cleaned_data['username'],
+                                         password=register_form.cleaned_data['password2'], )
             auth.login(request, new_user)
             return redirect('new_order')
         else:
-            args['user_register'] = new_user
+            args['custom_error'] = register_form
+        args['register_form'] = register_form
+        return render(request, 'register.html', args)
+    else:
+        register_form = RegistrationForm()
+        args['register_form'] = register_form
     return render_to_response('register.html', args)
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect('home')
 
 
 def home(request):
