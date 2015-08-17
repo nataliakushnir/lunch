@@ -1,7 +1,7 @@
 from django.contrib import auth
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
-from django.shortcuts import render_to_response, redirect, render
+from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
 from .models import Order, Dish
@@ -14,7 +14,7 @@ def index(request):
     if request.user.is_authenticated():
         return redirect('home')
     else:
-        return redirect('/login')
+        return redirect('login')
 
 
 @only_auth()
@@ -44,24 +44,23 @@ def new(request):
         else:
             info[dish.category.title] = []
             info[dish.category.title].append(dish)
-
     args.update(csrf(request))
     args['new_order'] = new_order
     args['dishes'] = info
     args['user'] = auth.get_user(request)
-    return render_to_response('new.html', args)
+    return render(request, 'new.html', args)
+
 
 
 @only_auth()
 def history(request):
-    return render_to_response('order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
-                                                     'username': request.user.username, })
+    return render(request, 'order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
+                                                  'username': request.user.username, })
 
 
 def login(request):
     args = {}
     args.update(csrf(request))
-
     if request.method == 'POST':
         login_form = LoginUserForm(request.POST)
         if login_form.is_valid():
@@ -99,7 +98,7 @@ def register(request):
     else:
         register_form = RegistrationForm()
         args['register_form'] = register_form
-    return render_to_response('register.html', args)
+    return render(request, 'register.html', args)
 
 
 def logout(request):
@@ -109,6 +108,6 @@ def logout(request):
 
 def home(request):
     if request.user.is_authenticated():
-        return render_to_response('layouts/main_logged_in.html')
+        return redirect('new_order')
     else:
         return redirect('login')
