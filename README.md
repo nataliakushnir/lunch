@@ -1,3 +1,3 @@
-instaRequirements
+installRequirements
 =======
-pip install django-bootstrap3
+pip install -r requirements.txt
