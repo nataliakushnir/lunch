@@ -170,3 +170,9 @@ BOOTSTRAP3 = {
         'inline': 'bootstrap3.renderers.InlineFieldRenderer',
     },
 }
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'natalia.l.kushnir@gmail.com'
+EMAIL_HOST_PASSWORD = 'Spoiler1'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

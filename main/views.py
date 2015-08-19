@@ -1,7 +1,10 @@
 from django.contrib import auth
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
+from django.template import Context
+from django.template.loader import get_template
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
 from .models import Order, Dish
@@ -48,8 +51,21 @@ def new(request):
     args['new_order'] = new_order
     args['dishes'] = info
     args['user'] = auth.get_user(request)
+    try:
+        if args['alert_success'] is not None:
+            html_order = get_template('email_order.html', )
+            order_html = Context({'order': Order.objects.last(),
+                                  'username': request.user.username})
+            html_content = html_order.render(order_html)
+            subject = 'Order'
+            from_email = 'natalia.l.kushnir@gmail.com'
+            to = auth.get_user(request).email
+            msg = EmailMultiAlternatives(subject, '', from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+    except:
+        pass
     return render(request, 'new.html', args)
-
 
 
 @only_auth()
