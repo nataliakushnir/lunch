@@ -10,6 +10,8 @@ from .forms import OrderForm, LoginUserForm, RegistrationForm
 from .models import Order, Dish
 from middlewares import CustomAuthMiddleware
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 
@@ -70,7 +72,32 @@ def new(request):
 
 @only_auth()
 def history(request):
-    return render(request, 'order_history.html', {'orders': Order.objects.filter(user_id=request.user.id),
+    sort = request.GET.get('sort')
+
+    if sort == 'summ':
+        user_orders = sorted(Order.objects.filter(user_id=request.user.id), key=lambda t: t.total())
+    else:
+        user_orders = Order.objects.filter(user_id=request.user.id).order_by('-date')
+
+    paginator = Paginator(user_orders, 2)
+    page = request.GET.get('page')
+
+
+    # if sort is not None
+    #     sort_url = request.get_full_path() + '&sort=' + sort
+    # sort_url = request.get_full_path() + '&sort=' + sort
+    # sort_url = request.get_full_path() + '&sort=' + sort
+
+
+
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    except EmptyPage:
+        orders = paginator.page(paginator.num_pages)
+
+    return render(request, 'order_history.html', {'orders': orders,
                                                   'username': request.user.username, })
 
 

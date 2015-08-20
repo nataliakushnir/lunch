@@ -1,5 +1,8 @@
 $(document).ready(function () {
-    var enableDays = ['2015-08-15', '2015-08-16'];
+
+    $.get("/ajax/available-days", function (data) {
+        enableDays = data;
+    });
 
     function enableAllTheseDays(date) {
         var sdate = $.datepicker.formatDate('yy-mm-dd', date);
@@ -16,7 +19,7 @@ $(document).ready(function () {
         onSelect: function (dateText) {
             //alert(dateText)
         }
-    });
+    }).keydown(false);
 
 
 
