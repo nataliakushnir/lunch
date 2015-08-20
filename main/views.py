@@ -15,7 +15,7 @@ only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 def index(request):
     if request.user.is_authenticated():
-        return redirect('home')
+        return redirect('new_order')
     else:
         return redirect('login')
 
@@ -75,6 +75,9 @@ def history(request):
 
 
 def login(request):
+    if request.user.is_authenticated():
+        return redirect('index')
+
     args = {}
     args.update(csrf(request))
     if request.method == 'POST':
@@ -119,11 +122,4 @@ def register(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect('home')
-
-
-def home(request):
-    if request.user.is_authenticated():
-        return redirect('new_order')
-    else:
-        return redirect('login')
+    return redirect('index')
