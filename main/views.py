@@ -1,12 +1,10 @@
 from django.contrib import auth
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
-from django.template import Context
-from django.template.loader import get_template
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
+from main.messages import SendMessage
 from .models import Order, Dish
 from middlewares import CustomAuthMiddleware
 
@@ -55,16 +53,7 @@ def new(request):
     args['user'] = auth.get_user(request)
     try:
         if args['alert_success'] is not None:
-            html_order = get_template('email_order.html', )
-            order_html = Context({'order': Order.objects.last(),
-                                  'username': request.user.username})
-            html_content = html_order.render(order_html)
-            subject = 'Order'
-            from_email = 'natalia.l.kushnir@gmail.com'
-            to = auth.get_user(request).email
-            msg = EmailMultiAlternatives(subject, '', from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
+            SendMessage.order_success(request)
     except:
         pass
     return render(request, 'new.html', args)
@@ -73,23 +62,13 @@ def new(request):
 @only_auth()
 def history(request):
     sort = request.GET.get('sort')
-
     if sort == 'summ':
         user_orders = sorted(Order.objects.filter(user_id=request.user.id), key=lambda t: t.total())
     else:
         user_orders = Order.objects.filter(user_id=request.user.id).order_by('-date')
+    paginator = Paginator(user_orders, 5)
 
-    paginator = Paginator(user_orders, 2)
     page = request.GET.get('page')
-
-
-    # if sort is not None
-    #     sort_url = request.get_full_path() + '&sort=' + sort
-    # sort_url = request.get_full_path() + '&sort=' + sort
-    # sort_url = request.get_full_path() + '&sort=' + sort
-
-
-
     try:
         orders = paginator.page(page)
     except PageNotAnInteger:
@@ -97,7 +76,11 @@ def history(request):
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
 
+    period = request.GET.get('period')
+
     return render(request, 'order_history.html', {'orders': orders,
+                                                  'sort': sort,
+                                                  'period': period,
                                                   'username': request.user.username, })
 
 
@@ -136,6 +119,7 @@ def register(request):
             new_user = auth.authenticate(username=register_form.cleaned_data['username'],
                                          password=register_form.cleaned_data['password2'], )
             auth.login(request, new_user)
+            SendMessage.register_success(request)
             return redirect('new_order')
         else:
             args['custom_error'] = register_form

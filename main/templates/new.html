@@ -46,13 +46,13 @@
                                 {% for dish in dish_list %}
                                     <div class="row well well-sm">
                                         <div class="col-xs-1">
-                                            <input type="checkbox" name="dish_{{ dish.id }}" value="yes"/>
+                                            <input id='check_{{ dish.id }}' type="checkbox" name="dish_{{ dish.id }}" value="yes"/>
                                         </div>
-                                        <div class="col-xs-3">{{ dish.name }}</div>
-                                        <div class="col-xs-1">{{ dish.weight }}</div>
-                                        <div class="col-xs-4 col-xs-offset-1">{{ dish.description }}</div>
-                                        <div class="col-xs-2 text-center">{{ dish.price }}</div>
-                                    </div>
+                                        <div class="col-xs-3"><label for="check_{{ dish.id }}">{{ dish.name }}</label></div>
+                                        <div class="col-xs-1"><label for="check_{{ dish.id }}">{{ dish.weight }}</label></div>
+                                        <div class="col-xs-4 col-xs-offset-1"><label for="check_{{ dish.id }}">{{ dish.description }}</label></div>
+                                        <div class="col-xs-2 text-center"><label for="check_{{ dish.id }}">{{ dish.price }}</label></div>
+                                        </div>
                                 {% endfor %}
                             </div>
                         </div>

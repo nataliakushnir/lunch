@@ -37,39 +37,26 @@
                     </div>
                 </div>
             {% endfor %}
-
-
             <div class="pagination">
                 <span class="step-links">
                     {% if orders.has_previous %}
-                        <a href="?page={{ orders.previous_page_number }}">previous</a>
+                        <a href="?page={{ orders.previous_page_number }}&sort={{ sort }}">previous</a>
                     {% endif %}
-
                     <span class="current">
                         Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
                     </span>
-
                     {% if orders.has_next %}
-                        <a href="?page={{ orders.next_page_number }}">next</a>
+                        <a href="?page={{ orders.next_page_number }}&sort={{ sort }}">next</a>
                     {% endif %}
                 </span>
             </div>
-
         </div>
     </div>
     <div class="col-xs-3 col-xs-offset-1">
         <div class="well well-sm">
-            <h5 class="text-center">Show orders for</h5>
-            <a href="#"><h6>today</h6></a>
-            <a href="#"><h6>this week</h6></a>
-            <a href="#"><h6>this month</h6></a>
-            <a href="#"><h6>all times</h6></a>
-        </div>
-        <br />
-        <div class="well well-sm">
             <h5 class="text-center">Sort by</h5>
-            <a href="#"><h6>Date</h6></a>
-            <a href="#"><h6>Summ</h6></a>
+            <a href="{% url 'order_history'%}?page={{ orders.number}}&sort=date"><h6>Date</h6></a>
+            <a href="{% url 'order_history'%}?page={{ orders.number}}&sort=summ"><h6>Summ</h6></a>
         </div>
     </div>
 {% endblock %}
