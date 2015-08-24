@@ -9,7 +9,6 @@ from django.forms import DateInput
 
 
 class OrderForm(forms.Form):
-
     # TODO replace this hardcode!
     url = 'http://localhost:8000/ajax/available-days'
     r = urllib.request.urlopen(url)

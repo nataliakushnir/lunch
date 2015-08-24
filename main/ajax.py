@@ -11,11 +11,10 @@ def available_days(request):
     one_week = datetime.timedelta(days=7)
     next_monday = last_monday + one_week
     week = []
-    days= 0
-
+    days = 0
     while days < 5:
         next_day = next_monday + datetime.timedelta(days)
-        if Order.objects.filter(date=next_day,).exists():
+        if Order.objects.filter(date=next_day, ).exists():
             pass
         else:
             week.append(next_day.strftime('%Y-%m-%d'))

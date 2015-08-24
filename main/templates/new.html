@@ -16,6 +16,11 @@
             <div class="col-xs-6 col-xs-offset-1">
                 <br/>
                 <br/>
+                {% if db_alert %}
+                    <div class="alert alert-info text-center">
+                        {{ db_alert }}
+                    </div>
+                {% endif %}
                 {% block alert %}
                     {% if alert_success %}
                         <div class="alert alert-success text-center">
@@ -67,7 +72,13 @@
                     <br/>
                     <br/>
                     <br/>
-
+                    {% if available_dates_alert %}
+                        <div class="row">
+                            <div class="col-xs-12 alert alert-info text-center">
+                                {{ available_dates_alert }}
+                            </div>
+                        </div>
+                    {% endif %}
 
                     {{ new_order }}
                     <input type="hidden" id="id_user" name="user" value="{{ user.id }}">

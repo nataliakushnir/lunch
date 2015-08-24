@@ -28,15 +28,15 @@ def new(request):
         order.user = request.user
         order.date = request.POST.get("date", )
         try:
-            order.save()
             for key in request.POST:
                 if "dish_" in key:
+                    order.save()
                     item_id = int(key[5:])
                     order.items.add(Dish.objects.get(id=item_id))
                     args['alert_success'] = "Your order created successfully!"
                 else:
                     args['custom_alert'] = "Any item not selected"
-        except ValidationError:
+        except:
             args['custom_alert'] = "Please enter correct date"
     new_order = OrderForm
     dishes = Dish.objects.all()
@@ -56,7 +56,6 @@ def new(request):
             SendMessage.order_success(request)
     except:
         pass
-    args['available_dates_alert'] = "Help"
     return render(request, 'new.html', args)
 
 

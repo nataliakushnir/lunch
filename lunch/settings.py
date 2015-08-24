@@ -42,6 +42,9 @@ INSTALLED_APPS = (
     'main',
 )
 
+FAKER_LOCALE = None
+FAKER_PROVIDERS = None
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
