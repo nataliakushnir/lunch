@@ -56,6 +56,7 @@ def new(request):
             SendMessage.order_success(request)
     except:
         pass
+    args['available_dates_alert'] = "Help"
     return render(request, 'new.html', args)
 
 
@@ -75,12 +76,8 @@ def history(request):
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
-
-    period = request.GET.get('period')
-
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
-                                                  'period': period,
                                                   'username': request.user.username, })
 
 
