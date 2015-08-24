@@ -42,8 +42,6 @@ INSTALLED_APPS = (
     'main',
 )
 
-FAKER_LOCALE = None
-FAKER_PROVIDERS = None
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -173,7 +171,7 @@ BOOTSTRAP3 = {
         'inline': 'bootstrap3.renderers.InlineFieldRenderer',
     },
 }
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST ='smtp.gmail.com'
 EMAIL_HOST_USER = 'natalia.l.kushnir@gmail.com'
 EMAIL_HOST_PASSWORD = 'Spoiler1'
 EMAIL_PORT = 587

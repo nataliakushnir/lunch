@@ -19,7 +19,6 @@ class SendMessage:
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return msg
-
     def register_success(request):
         html_order = get_template('email_register.html', )
         order_html = Context({'order': Order.objects.last(),
