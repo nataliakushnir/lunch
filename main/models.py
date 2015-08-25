@@ -51,3 +51,11 @@ class Order(models.Model):
         return a[1:]
 
     my_field.short_description = 'Column description'
+
+
+class Calendar(models.Model):
+    date = models.DateField()
+    dish = models.ForeignKey(Dish)
+
+    def __str__(self):
+        return str(self.date)

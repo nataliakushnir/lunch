@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import Order, Dish, Category
+from main.models import Order, Dish, Category, Calendar
 
 
 class DishAdmin(admin.ModelAdmin):
@@ -19,6 +19,8 @@ class OrderAdmin(admin.ModelAdmin):
         'total',
     )
 
+
 admin.site.register(Category)
+admin.site.register(Calendar)
 admin.site.register(Dish, DishAdmin)
 admin.site.register(Order, OrderAdmin)
