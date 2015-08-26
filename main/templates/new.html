@@ -34,14 +34,13 @@
                 {% endblock %}
                 <form action="{% url 'new_order' %}" method="post">
                     {% csrf_token %}
-                    {% for category_title, dish_list in dishes.items %}
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row text-center">
-                                    <h3 class="well well-sm">{{ category_title }}</h3>
-                                </div>
+{#                    {% for category_title, dish_list in dishes.items %}#}
+{#                        <div class="row">#}
+{#                            <div class="col-xs-12">#}
+{#                                <div class="row text-center">#}
+{#                                    <h3 class="well well-sm">{{ category_title }}</h3>#}
+{#                                </div>#}
                                 <br/>
-
                                 <div class="row well well-sm">
                                     <div class="col-xs-1"></div>
                                     <div class="col-xs-3">Назва</div>
@@ -49,7 +48,7 @@
                                     <div class="col-xs-4 col-xs-offset-1">Опис</div>
                                     <div class="col-xs-2">Ціна (грн)</div>
                                 </div>
-                                {% for dish in dish_list %}
+                                {% for dish in dishes %}
                                     <div class="row well well-sm">
                                         <div class="col-xs-1">
                                             <input id='check_{{ dish.id }}' type="checkbox" name="dish_{{ dish.id }}"
@@ -65,13 +64,13 @@
                                                 for="check_{{ dish.id }}">{{ dish.price }}</label></div>
                                     </div>
                                 {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                    <br/>#}
+{#                    <br/>#}
+{#                    <br/>#}
+{#                    <br/>#}
                     {% if available_dates_alert %}
                         <div class="row">
                             <div class="col-xs-12 alert alert-info text-center">

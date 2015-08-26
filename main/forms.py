@@ -13,7 +13,7 @@ class OrderForm(forms.Form):
     url = 'http://localhost:8000/ajax/available-days'
     r = urllib.request.urlopen(url)
     dates = json.loads(r.read().decode(r.info().get_param('charset') or 'utf-8'))
-    date = forms.DateField(initial='',
+    date = forms.DateField(
                            label="Оберіть дату замовлення",
                            widget=DateInput(format='%Y-%m-%d'),
                            input_formats=['%Y-%m-%d'], )

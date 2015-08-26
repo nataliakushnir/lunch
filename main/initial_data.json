@@ -1,0 +1,68 @@
+[
+  {
+    "model": "main.Category",
+    "pk": 1,
+    "fields": {
+      "title": "Salats"
+    }
+  },
+  {
+    "model": "main.Category",
+    "pk": 2,
+    "fields": {
+      "title": "Main dishes"
+    }
+  },
+  {
+    "model": "main.Dish",
+    "pk": 1,
+    "fields": {
+      "name": "Salat1",
+      "category": "1",
+      "description": "Salat's description1",
+      "weight" : "170",
+      "price" : "12",
+      "created_date": "2015-08-24",
+      "modified_date":"2015-08-24"
+    }
+  },
+  {
+    "model": "main.Dish",
+    "pk": 2,
+    "fields": {
+      "name": "Meat",
+      "category": "2",
+      "description": "Meat's description",
+      "weight" : "150",
+      "price" : "15",
+      "created_date": "2015-08-24",
+      "modified_date":"2015-08-24"
+    }
+  },
+  {
+    "model": "main.Dish",
+    "pk": 3,
+    "fields": {
+      "name": "Salat2",
+      "category": "1",
+      "description": "Salat 2 description",
+      "weight" : "170",
+      "price" : "13",
+      "created_date": "2015-08-24",
+      "modified_date":"2015-08-24"
+    }
+  },
+  {
+    "model": "main.Dish",
+    "pk": 4,
+    "fields": {
+      "name": "Soup",
+      "category": "2",
+      "description": "Soup's description",
+      "weight" : "250",
+      "price" : "10",
+      "created_date": "2015-08-24",
+      "modified_date":"2015-08-24"
+    }
+  }
+]

@@ -16,9 +16,12 @@ $(document).ready(function () {
         minDate: 1,
         dateFormat: "yy-mm-dd",
         beforeShowDay: enableAllTheseDays,
-        onSelect: function (dateText) {
-            //alert(dateText)
-        }
+        onSelect: function(dateText) {
+        $(this).change();
+      }
+    })
+    .change(function() {
+      window.location.href = "?date=" + this.value;
     }).keydown(false);
 
 

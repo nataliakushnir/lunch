@@ -1,3 +1,5 @@
+import json
+import urllib
 from django.contrib import auth
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
@@ -5,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
 from main.messages import SendMessage
-from .models import Order, Dish
+from .models import Order, Dish, Calendar
 from middlewares import CustomAuthMiddleware
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -27,6 +29,7 @@ def new(request):
         order = Order()
         order.user = request.user
         order.date = request.POST.get("date", )
+
         try:
             for key in request.POST:
                 if "dish_" in key:
@@ -39,14 +42,11 @@ def new(request):
         except:
             args['custom_alert'] = "Please enter correct date"
     new_order = OrderForm
-    dishes = Dish.objects.all()
-    info = {}
-    for dish in dishes:
-        if dish.category.title in info:
-            info[dish.category.title].append(dish)
-        else:
-            info[dish.category.title] = []
-            info[dish.category.title].append(dish)
+    date = request.GET.get('date')
+    dishes_for_date = Calendar.objects.filter(date=date)
+    info = []
+    for dish in dishes_for_date:
+        info.append(dish.dish)
     args.update(csrf(request))
     args['new_order'] = new_order
     args['dishes'] = info
