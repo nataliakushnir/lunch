@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_slug
 from django.forms import DateInput
+import dateutil.parser
+from django.http import request
 
 
 class OrderForm(forms.Form):
@@ -13,10 +15,13 @@ class OrderForm(forms.Form):
     url = 'http://localhost:8000/ajax/available-days'
     r = urllib.request.urlopen(url)
     dates = json.loads(r.read().decode(r.info().get_param('charset') or 'utf-8'))
+
     date = forms.DateField(
-                           label="Оберіть дату замовлення",
-                           widget=DateInput(format='%Y-%m-%d'),
-                           input_formats=['%Y-%m-%d'], )
+        label="Оберіть дату замовлення",
+        widget=DateInput(format='%Y-%m-%d'),
+        input_formats=['%Y-%m-%d'],
+        required=False,
+    )
 
 
 class LoginUserForm(forms.Form):

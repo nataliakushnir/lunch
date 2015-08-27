@@ -22,6 +22,7 @@ $(document).ready(function () {
     })
     .change(function() {
       window.location.href = "?date=" + this.value;
+
     }).keydown(false);
 
 

@@ -1,3 +1,4 @@
+import datetime
 import json
 import urllib
 from django.contrib import auth
@@ -6,9 +7,11 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
+from main.ajax import available_days
 from main.messages import SendMessage
 from .models import Order, Dish, Calendar
 from middlewares import CustomAuthMiddleware
+import dateutil.parser
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -29,27 +32,36 @@ def new(request):
         order = Order()
         order.user = request.user
         order.date = request.POST.get("date", )
-
-        try:
+        if order.date in OrderForm.dates:
             for key in request.POST:
                 if "dish_" in key:
-                    order.save()
+                    order.save(request.GET)
                     item_id = int(key[5:])
                     order.items.add(Dish.objects.get(id=item_id))
                     args['alert_success'] = "Your order created successfully!"
                 else:
                     args['custom_alert'] = "Any item not selected"
-        except:
-            args['custom_alert'] = "Please enter correct date"
-    new_order = OrderForm
+    new_order = OrderForm(request.GET)
     date = request.GET.get('date')
-    dishes_for_date = Calendar.objects.filter(date=date)
     info = []
-    for dish in dishes_for_date:
-        info.append(dish.dish)
+    if request.GET:
+        if date in OrderForm.dates:
+            dishes_for_date = Calendar.objects.filter(date=date)
+            for dish in dishes_for_date:
+                info.append(dish.dish)
+        else:
+            args['available_dates_alert'] = "Please enter correct date"
+    category_info = {}
+    for dish in info:
+        dish_info = Dish.objects.filter(name=dish)
+        for dish in dish_info:
+            if dish.category.title not in dish_info:
+                category_info.setdefault(dish.category, [])
+                category_info.setdefault(dish.category, []).append(dish)
     args.update(csrf(request))
     args['new_order'] = new_order
-    args['dishes'] = info
+    args['categories'] = category_info
+    args['dishes'] = category_info.values()
     args['user'] = auth.get_user(request)
     try:
         if args['alert_success'] is not None:
