@@ -16,6 +16,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'date',
         'my_field',
+        'total',
     )
 
 

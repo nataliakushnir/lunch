@@ -31,7 +31,8 @@ def new(request):
                 if "dish_" in key:
                     order.save(request.GET)
                     item_id = int(key[5:])
-                    c = Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=1)
+
+                    Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=count)
                     args['alert_success'] = "Your order created successfully!"
                 else:
                     args['custom_alert'] = "Any item not selected"
@@ -68,7 +69,6 @@ def new(request):
 @only_auth()
 def history(request):
     sort = request.GET.get('sort')
-
     if sort == 'summ':
         user_orders = sorted(Order.objects.filter(user_id=request.user.id), key=lambda t: t.total())
     else:
@@ -82,16 +82,9 @@ def history(request):
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
-    for order in user_orders:
-        total=[]
-        for item in order.items.all():
-            total.append(item.price)
-            order_total = sum(total)
-        print(order_total)
 
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
-                                                  'total': order_total,
                                                   'username': request.user.username, })
 
 

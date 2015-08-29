@@ -9,7 +9,7 @@
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                                href="#collapse-{{ order.id }}" aria-expanded="false"
                                aria-controls="collapse-{{ order.id }}">
-                                №{{ order.id }}, {{ order.date }}, загальна сума - {{ total }}
+                                №{{ order.id }}, {{ order.date }}, загальна сума - {{ order.total }}
                             </a>
                         </h4>
                     </div>
@@ -29,7 +29,7 @@
                                 {% for dish in order.items.all %}
                                     <tr>
                                         <td>{{ dish.name }}</td>
-                                        <td>{{ order.count }}</td>
+                                        <td>{{ dish.count }}</td>
                                         <td>{{ dish.price }}</td>
                                     </tr>
                                 {% endfor %}

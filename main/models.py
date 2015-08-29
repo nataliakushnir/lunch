@@ -38,15 +38,20 @@ class Order(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, default=1)
 
+    def total(self):
+        b=0
+        for item in Calculate.objects.filter(order=self):
+            a = item.dish.price*item.count
+            b+=a
+        return b
+
 
     def my_field(self):
         a = ''
-        for b in self.items.all():
-            a += ", " + b.name
+        for item in Calculate.objects.filter(order=self):
+            a += ", " + item.dish.name + 'x' + str(item.count)
         return a[1:]
 
-    def total(self):
-        return self.total()
 
     my_field.short_description = 'Column description'
 
@@ -66,6 +71,3 @@ class Calculate(models.Model):
 
     def __str__(self):
         return str(self.order.date)
-
-    def total(self):
-        return self.count
