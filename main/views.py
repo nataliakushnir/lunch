@@ -1,19 +1,13 @@
-import datetime
-import json
-import urllib
 from django.contrib import auth
 from django.core.context_processors import csrf
-from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
-from main.ajax import available_days
 from main.messages import SendMessage
-from .models import Order, Dish, Calendar
+from .models import Order, Dish, Calendar, Calculate
 from middlewares import CustomAuthMiddleware
-import dateutil.parser
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
@@ -37,7 +31,7 @@ def new(request):
                 if "dish_" in key:
                     order.save(request.GET)
                     item_id = int(key[5:])
-                    order.items.add(Dish.objects.get(id=item_id))
+                    c = Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=1)
                     args['alert_success'] = "Your order created successfully!"
                 else:
                     args['custom_alert'] = "Any item not selected"
@@ -74,6 +68,7 @@ def new(request):
 @only_auth()
 def history(request):
     sort = request.GET.get('sort')
+
     if sort == 'summ':
         user_orders = sorted(Order.objects.filter(user_id=request.user.id), key=lambda t: t.total())
     else:
@@ -87,8 +82,16 @@ def history(request):
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
+    for order in user_orders:
+        total=[]
+        for item in order.items.all():
+            total.append(item.price)
+            order_total = sum(total)
+        print(order_total)
+
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
+                                                  'total': order_total,
                                                   'username': request.user.username, })
 
 
