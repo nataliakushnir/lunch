@@ -39,10 +39,10 @@ class Order(models.Model):
     user = models.ForeignKey(User, default=1)
 
     def total(self):
-        b=0
+        b = 0
         for item in Calculate.objects.filter(order=self):
-            a = item.dish.price*item.count
-            b+=a
+            a = item.dish.price * item.count
+            b += a
         return b
 
 
@@ -51,7 +51,6 @@ class Order(models.Model):
         for item in Calculate.objects.filter(order=self):
             a += ", " + item.dish.name + 'x' + str(item.count)
         return a[1:]
-
 
     my_field.short_description = 'Column description'
 

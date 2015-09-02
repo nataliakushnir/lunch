@@ -57,8 +57,8 @@
     <div class="col-xs-3 col-xs-offset-1">
         <div class="well well-sm">
             <h5 class="text-center">Sort by</h5>
-            <a href="{% url 'order_history'%}?page={{ orders.number}}&sort=date"><h6>Date</h6></a>
-            <a href="{% url 'order_history'%}?page={{ orders.number}}&sort=summ"><h6>Summ</h6></a>
+            <a href="{% url 'order_history' %}?page={{ orders.number }}&sort=date"><h6>Date</h6></a>
+            <a href="{% url 'order_history' %}?page={{ orders.number }}&sort=summ"><h6>Summ</h6></a>
         </div>
     </div>
 {% endblock %}

@@ -8,7 +8,6 @@ from .models import Order, Dish, Calendar, Calculate
 from middlewares import CustomAuthMiddleware
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 
@@ -31,7 +30,8 @@ def new(request):
                 if "dish_" in key:
                     order.save(request.GET)
                     item_id = int(key[5:])
-
+                    count = request.POST['count_' + str(item_id)]
+                    print(count)
                     Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=count)
                     args['alert_success'] = "Your order created successfully!"
                 else:
@@ -56,7 +56,6 @@ def new(request):
     args.update(csrf(request))
     args['new_order'] = new_order
     args['categories'] = category_info
-    args['dishes'] = category_info.values()
     args['user'] = auth.get_user(request)
     try:
         if args['alert_success'] is not None:
@@ -76,15 +75,22 @@ def history(request):
     paginator = Paginator(user_orders, 5)
 
     page = request.GET.get('page')
+
     try:
         orders = paginator.page(page)
     except PageNotAnInteger:
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
-
+    info = {}
+    for order in orders:
+        order_info = []
+        for dish in Calculate.objects.filter(order=order):
+            order_info.append(dish)
+            info[order.id]=order_info
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
+                                                  'dishes': info,
                                                   'username': request.user.username, })
 
 
