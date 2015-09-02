@@ -27,62 +27,60 @@
                         </div>
                     {% endif %}
                 {% endblock %}
-                    <form action="{% url 'new_order' %}" method="post">
-                        {% csrf_token %}
-                        {% for category, dishes in categories.items %}
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row text-center">
-                                        <h3 class="well well-sm">{{ category }}</h3>
-                                    </div>
-                                    <br/>
-
+                <form action="{% url 'new_order' %}" method="post">
+                    {% csrf_token %}
+                    {% for category, dishes in categories.items %}
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row text-center">
+                                    <h3 class="well well-sm">{{ category }}</h3>
+                                </div>
+                                <br/>
+                                <div class="row well well-sm">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col-xs-2">Назва</div>
+                                    <div class="col-xs-1">Вихід</div>
+                                    <div class="col-xs-2">Кількість</div>
+                                    <div class="col-xs-4 text-center">Опис</div>
+                                    <div class="col-xs-2">Ціна (грн)</div>
+                                </div>
+                                {% for dish in dishes %}
                                     <div class="row well well-sm">
-                                        <div class="col-xs-1"></div>
-                                        <div class="col-xs-3">Назва</div>
-                                        <div class="col-xs-1">Вихід</div>
-                                        <div class="col-xs-4 col-xs-offset-1">Опис</div>
-                                        <div class="col-xs-2">Ціна (грн)</div>
-                                    </div>
-                                    {% for dish in dishes %}
-                                        <div class="row well well-sm">
-                                            <div class="col-xs-1">
-                                                <input id='check_{{ dish.id }}' type="checkbox"
-                                                       name="dish_{{ dish.id }}"
-                                                       value="yes"/>
-                                            </div>
-                                            <div class="col-xs-3"><label
-                                                    for="check_{{ dish.id }}">{{ dish.name }}</label>
-                                            </div>
-                                            <div class="col-xs-1"><label
-                                                    for="check_{{ dish.id }}">{{ dish.weight }}</label>
-                                            </div>
-                                            <div class="col-xs-4 col-xs-offset-1"><label
-                                                    for="check_{{ dish.id }}">{{ dish.description }}</label></div>
-                                            <div class="col-xs-2 text-center"><label
-                                                    for="check_{{ dish.id }}">{{ dish.price }}</label></div>
+                                        <div class="col-xs-1">
+                                            <input id='check_{{ dish.id }}' type="checkbox"
+                                                   name="dish_{{ dish.id }}"
+                                                   value="yes"/>
                                         </div>
-                                    {% endfor %}
-                                </div>
+                                        <div class="col-xs-2"><label
+                                                for="check_{{ dish.id }}">{{ dish.name }}</label>
+                                        </div>
+                                        <div class="col-xs-1">{{ dish.weight }}
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input name="count_{{ dish.id }}" type="number" min="0" max="10" value = "1" style="width: 45px;">
+                                        </div>
+                                        <div class="col-xs-4">{{ dish.description }}</div>
+                                        <div class="col-xs-2 text-center">{{ dish.price }}</div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        {% if available_dates_alert %}
-                            <div class="row">
-                                <div class="col-xs-12 alert alert-info text-center">
-                                    {{ available_dates_alert }}
-                                </div>
+                        </div>
+                    {% endfor %}
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    {% if available_dates_alert %}
+                        <div class="row">
+                            <div class="col-xs-12 alert alert-info text-center">
+                                {{ available_dates_alert }}
                             </div>
-                        {% endif %}
-
-                        {{ new_order }}
-                        <input type="hidden" id="id_user" name="user" value="{{ user.id }}">
-                        <input type="submit" class="btn btn-primary" value="Зробити замовлення"/>
-
-                    </form>
+                        </div>
+                    {% endif %}
+                    {{ new_order }}
+                    <input type="hidden" id="id_user" name="user" value="{{ user.id }}">
+                    <input type="submit" class="btn btn-primary" value="Зробити замовлення"/>
+                </form>
             </div>
         </div>
     </div>

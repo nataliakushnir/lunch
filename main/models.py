@@ -32,22 +32,30 @@ class Order(models.Model):
     class Meta:
         verbose_name_plural = "Orders"
 
-    items = models.ManyToManyField(Dish)
+    items = models.ManyToManyField(Dish, through='Calculate')
     date = models.DateField()
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, default=1)
 
+    def calculates(self):
+        list = []
+        for item in Calculate.objects.filter(order=self):
+            list.append(item)
+        return list
+
     def total(self):
-        sum = 0
-        for i in self.items.all():
-            sum += i.price
-        return sum
+        b = 0
+        for item in Calculate.objects.filter(order=self):
+            a = item.dish.price * item.count
+            b += a
+        return b
+
 
     def my_field(self):
         a = ''
-        for b in self.items.all():
-            a += ", " + b.name
+        for item in Calculate.objects.filter(order=self):
+            a += ", " + item.dish.name + 'x' + str(item.count)
         return a[1:]
 
     my_field.short_description = 'Column description'
@@ -59,3 +67,12 @@ class Calendar(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+
+class Calculate(models.Model):
+    order = models.ForeignKey(Order)
+    dish = models.ForeignKey(Dish)
+    count = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return str(self.order.date)

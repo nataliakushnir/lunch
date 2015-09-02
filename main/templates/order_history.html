@@ -1,56 +1,58 @@
 {% extends 'layouts/main_logged_in.html' %}
 {% block user_content %}
     <div class="col-xs-8">
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            {% for order in orders %}
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="heading-{{ order.id }}">
-                        <h4 class="panel-title">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                               href="#collapse-{{ order.id }}" aria-expanded="false"
-                               aria-controls="collapse-{{ order.id }}">
-                                №{{ order.id }}, {{ order.date }}, загальна сума - {{ order.total }}
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapse-{{ order.id }}" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="heading-{{ order.id }}">
-                        <div class="panel-body">
-                            <table class="table">
-                                <caption>Дата створення замовлення: {{ order.modified_date }}</caption>
-                                <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Price</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for dish in order.items.all %}
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                {% for order in orders %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="heading-{{ order.id }}">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapse-{{ order.id }}" aria-expanded="false"
+                                   aria-controls="collapse-{{ order.id }}">
+                                    №{{ order.id }}, {{ order.date }}, загальна сума - {{ order.total }}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse-{{ order.id }}" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="heading-{{ order.id }}">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <caption>Дата створення замовлення: {{ order.modified_date }}</caption>
+                                    <thead>
                                     <tr>
-                                        <td>{{ dish.name }}</td>
-                                        <td>{{ dish.price }}</td>
+                                        <th>Title</th>
+                                        <th>Count</th>
+                                        <th>Price</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {% for calculate  in order.calculates %}
+                                            <tr>
+                                                <td>{{ calculate.dish.name }}</td>
+                                                <td>{{ calculate.count }}</td>
+                                                <td>{{ calculate.dish.price }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-            <div class="pagination">
-                <span class="step-links">
-                    {% if orders.has_previous %}
-                        <a href="?page={{ orders.previous_page_number }}&sort={{ sort }}">previous</a>
-                    {% endif %}
-                    <span class="current">
-                        Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+                {% endfor %}
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if orders.has_previous %}
+                            <a href="?page={{ orders.previous_page_number }}&sort={{ sort }}">previous</a>
+                        {% endif %}
+                        <span class="current">
+                            Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+                        </span>
+                        {% if orders.has_next %}
+                            <a href="?page={{ orders.next_page_number }}&sort={{ sort }}">next</a>
+                        {% endif %}
                     </span>
-                    {% if orders.has_next %}
-                        <a href="?page={{ orders.next_page_number }}&sort={{ sort }}">next</a>
-                    {% endif %}
-                </span>
+                </div>
             </div>
-        </div>
     </div>
     <div class="col-xs-3 col-xs-offset-1">
         <div class="well well-sm">

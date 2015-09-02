@@ -1,18 +1,11 @@
-import datetime
-import json
-import urllib
 from django.contrib import auth
 from django.core.context_processors import csrf
-from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
 from .forms import OrderForm, LoginUserForm, RegistrationForm
-from main.ajax import available_days
 from main.messages import SendMessage
-from .models import Order, Dish, Calendar
+from .models import Order, Dish, Calendar, Calculate
 from middlewares import CustomAuthMiddleware
-import dateutil.parser
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
@@ -37,7 +30,8 @@ def new(request):
                 if "dish_" in key:
                     order.save(request.GET)
                     item_id = int(key[5:])
-                    order.items.add(Dish.objects.get(id=item_id))
+                    count = request.POST['count_' + str(item_id)]
+                    Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=count)
                     args['alert_success'] = "Your order created successfully!"
                 else:
                     args['custom_alert'] = "Any item not selected"
@@ -45,8 +39,8 @@ def new(request):
     date = request.GET.get('date')
     info = []
     if request.GET:
+        dishes_for_date = Calendar.objects.filter(date=date)
         if date in OrderForm.dates:
-            dishes_for_date = Calendar.objects.filter(date=date)
             for dish in dishes_for_date:
                 info.append(dish.dish)
         else:
@@ -61,7 +55,6 @@ def new(request):
     args.update(csrf(request))
     args['new_order'] = new_order
     args['categories'] = category_info
-    args['dishes'] = category_info.values()
     args['user'] = auth.get_user(request)
     try:
         if args['alert_success'] is not None:
@@ -81,14 +74,23 @@ def history(request):
     paginator = Paginator(user_orders, 5)
 
     page = request.GET.get('page')
+
     try:
         orders = paginator.page(page)
     except PageNotAnInteger:
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
+    info = {}
+    for order in orders:
+        order_info = []
+        for calculate in Calculate.objects.filter(order=order):
+            order_info.append(calculate)
+            info[order.id]=order_info
+
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
+                                                  'dishes': info,
                                                   'username': request.user.username, })
 
 
