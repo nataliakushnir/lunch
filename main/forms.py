@@ -1,13 +1,14 @@
 import json
 import urllib
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_slug
 from django.forms import DateInput
 import dateutil.parser
 from django.http import request
+from main.models import Order
 
 
 class OrderForm(forms.Form):
@@ -60,3 +61,8 @@ class RegistrationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
+
+
+class ChangeUserPasswordForm(PasswordChangeForm):
+    password = forms.CharField(min_length=3,
+                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))

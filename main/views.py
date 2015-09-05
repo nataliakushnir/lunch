@@ -1,10 +1,17 @@
+import calendar
+import datetime
 from django.contrib import auth
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.context_processors import csrf
-from django.shortcuts import redirect, render
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render, resolve_url
+from django.template.response import TemplateResponse
 from django.utils.decorators import decorator_from_middleware_with_args
-from .forms import OrderForm, LoginUserForm, RegistrationForm
+from .forms import OrderForm, LoginUserForm, RegistrationForm, ChangeUserPasswordForm
 from main.messages import SendMessage
-from .models import Order, Dish, Calendar, Calculate
+from .models import Order, Dish, Calendar, Calculate, Category
 from middlewares import CustomAuthMiddleware
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -33,12 +40,13 @@ def new(request):
                     count = request.POST['count_' + str(item_id)]
                     Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=count)
                     args['alert_success'] = "Your order created successfully!"
+                    OrderForm.dates.remove(str(order.date))
                 else:
                     args['custom_alert'] = "Any item not selected"
     new_order = OrderForm(request.GET)
-    date = request.GET.get('date')
     info = []
     if request.GET:
+        date = request.GET.get('date')
         dishes_for_date = Calendar.objects.filter(date=date)
         if date in OrderForm.dates:
             for dish in dishes_for_date:
@@ -86,8 +94,7 @@ def history(request):
         order_info = []
         for calculate in Calculate.objects.filter(order=order):
             order_info.append(calculate)
-            info[order.id]=order_info
-
+            info[order.id] = order_info
     return render(request, 'order_history.html', {'orders': orders,
                                                   'sort': sort,
                                                   'dishes': info,
@@ -144,3 +151,87 @@ def register(request):
 def logout(request):
     auth.logout(request)
     return redirect('index')
+
+
+def private(request, queryset=None):
+    args = {}
+    period = request.GET.get('statistic')
+
+    # get dates for this week
+
+    today = datetime.date.today()
+    last_monday = today - datetime.timedelta(days=today.weekday())
+    one_week = datetime.timedelta(days=7)
+    end_of_week = last_monday + one_week - datetime.timedelta(days=1)
+    week = []
+    start_period = last_monday
+    end_period = end_of_week
+
+    # get dates for this month
+
+    get_month = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
+    if period == 'week':
+        start_period = last_monday
+        end_period = end_of_week
+    # elif period == 'month':
+    #     start_period = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[0]
+    #     end_period = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
+
+    d = start_period
+
+    delta = datetime.timedelta(days=1)
+    while d <= end_period:
+        week.append(d.strftime("%Y-%m-%d"))
+        d+=delta
+    category_list = []
+
+    for dish in Dish.objects.all():
+        if dish.category not in category_list:
+            category_list.append(dish.category)
+    count_of_dishes_in_categories = {}
+    for category in Category.objects.all():
+        s = 0
+        for calculate in Calculate.objects.all():
+            if period == week:
+                if calculate.date().strftime('%Y-%m-%d') in period:
+                    if calculate.dish.category == category:
+                        s += calculate.count
+                count_of_dishes_in_categories[category] = s
+            else:
+                if calculate.dish.category == category:
+                    s += calculate.count
+                count_of_dishes_in_categories[category] = s
+    args['categories'] = category_list
+
+    return render(request, 'personal account.html', args)
+
+
+def password_change(request,
+                    template_name='personal account.html',
+                    post_change_redirect=None,
+                    password_change_form=PasswordChangeForm,
+                    extra_context=None):
+    if post_change_redirect is None:
+        post_change_redirect = reverse('password_change_done')
+    else:
+        post_change_redirect = resolve_url(post_change_redirect)
+    if request.method == "POST":
+        form = password_change_form(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            # Updating the password logs out all other sessions for the user
+            # except the current one if
+            # django.contrib.auth.middleware.SessionAuthenticationMiddleware
+            # is enabled.
+            update_session_auth_hash(request, form.user)
+            return HttpResponseRedirect(post_change_redirect)
+    else:
+        form = password_change_form(user=request.user)
+    context = {
+        'form': form,
+        'title': _('Password change'),
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return TemplateResponse(request, template_name, context)

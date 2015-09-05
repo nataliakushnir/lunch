@@ -76,3 +76,7 @@ class Calculate(models.Model):
 
     def __str__(self):
         return str(self.order.date)
+
+    def date(self):
+        calculate_date = self.order.date
+        return calculate_date

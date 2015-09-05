@@ -3,7 +3,7 @@
 <li><a href="{% url 'order_history' %}" class="{% if request.resolver_match.url_name == "order_history" %}active{% endif %} btn btn-primary">Історія замовлень</a></li>
 <br/>
 
-<li><a href="" class="btn btn-primary">Мої дані</a></li>
+<li><a href="{% url 'private' %}" class="{% if request.resolver_match.url_name == "private" %}active{% endif %} btn btn-primary">Мої дані</a></li>
 <br/>
 <li><a href="{% url 'logout' %}" class="btn btn-primary">Вийти</a></li>
 <br/>

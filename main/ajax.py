@@ -12,5 +12,9 @@ def available_days(request):
         if day.date > datetime.date.today():
             if day.date.strftime('%Y-%m-%d') not in week:
                 week.append(day.date.strftime('%Y-%m-%d'))
-    dates = week
+    orders_days = []
+    orders = Order.objects.all()
+    for order in orders:
+        orders_days.append(order.date.strftime('%Y-%m-%d'))
+    dates = list(set(week) - set(orders_days))
     return HttpResponse(json.dumps(dates), content_type='application/json')

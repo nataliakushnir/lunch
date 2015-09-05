@@ -12,6 +12,10 @@ $(document).ready(function () {
         return [false];
     }
 
+    $.get("/ajax/available-days", function (data) {
+        enableDays = data;
+    });
+
     $("#id_date").datepicker({
         minDate: 1,
         dateFormat: "yy-mm-dd",

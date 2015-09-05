@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^login/', 'main.views.login', name='login'),
     url(r'^logout/', 'main.views.logout', name='logout'),
     url(r'^register/', 'main.views.register', name='register'),
+    url(r'^home/private/', 'main.views.private', name='private'),
 
     # ajax methods
     url(r'^ajax/available-days', 'main.ajax.available_days', name='available_days'),
