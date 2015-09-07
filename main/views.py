@@ -1,5 +1,5 @@
-import calendar
 import datetime
+from datetime import date
 from django.contrib import auth
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -14,7 +14,7 @@ from main.messages import SendMessage
 from .models import Order, Dish, Calendar, Calculate, Category
 from middlewares import CustomAuthMiddleware
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from datetime import date, timedelta as td
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 
@@ -153,7 +153,7 @@ def logout(request):
     return redirect('index')
 
 
-def private(request, queryset=None):
+def private(request):
     args = {}
     period = request.GET.get('statistic')
 
@@ -163,44 +163,91 @@ def private(request, queryset=None):
     last_monday = today - datetime.timedelta(days=today.weekday())
     one_week = datetime.timedelta(days=7)
     end_of_week = last_monday + one_week - datetime.timedelta(days=1)
-    week = []
     start_period = last_monday
     end_period = end_of_week
-
-    # get dates for this month
-
-    get_month = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
-    if period == 'week':
-        start_period = last_monday
-        end_period = end_of_week
-    # elif period == 'month':
-    #     start_period = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[0]
-    #     end_period = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
-
     d = start_period
-
+    week = []
     delta = datetime.timedelta(days=1)
     while d <= end_period:
         week.append(d.strftime("%Y-%m-%d"))
         d+=delta
-    category_list = []
 
+    # get custom dates
+
+    start = request.POST.get('date_from')
+    end = request.POST.get('date_to')
+
+
+    category_list = []
     for dish in Dish.objects.all():
         if dish.category not in category_list:
             category_list.append(dish.category)
     count_of_dishes_in_categories = {}
     for category in Category.objects.all():
         s = 0
+        t = 0
         for calculate in Calculate.objects.all():
-            if period == week:
-                if calculate.date().strftime('%Y-%m-%d') in period:
+            if period == 'week':
+                args['start'] = start_period
+                args['end'] = end_period
+                if calculate.dish.category == category:
+                    d = start_period
+                    week = []
+                    delta = datetime.timedelta(days=1)
+                    while d <= end_period:
+                        week.append(d.strftime("%Y-%m-%d"))
+                        d+=delta
+                    if calculate.date().strftime("%Y-%m-%d") in week:
+                        s += calculate.count
+                        t += calculate.total()
+                        count_of_dishes_in_categories[category] = [s, t]
+            elif period == 'month':
+                if calculate.date().month == datetime.date.today().month:
                     if calculate.dish.category == category:
                         s += calculate.count
-                count_of_dishes_in_categories[category] = s
+                        t += calculate.total()
+                        args['month'] = today.strftime('%B')
+                    count_of_dishes_in_categories[category] = [s, t]
+            elif period == 'year':
+                if calculate.date().year == datetime.date.today().year:
+                    if calculate.dish.category == category:
+                        s += calculate.count
+                        t += calculate.total()
+                        args['year'] = today.strftime('%Y')
+                    count_of_dishes_in_categories[category] = [s, t]
+            elif period == 'custom':
+                args['custom_date'] = 1
+                if request.POST:
+                    try:
+                        start_period = datetime.datetime.strptime(datetime.datetime.strptime(start, '%m/%d/%Y').strftime('%Y-%d-%m'), '%Y-%d-%m').date()
+                        end_period = datetime.datetime.strptime(datetime.datetime.strptime(end, '%m/%d/%Y').strftime('%Y-%d-%m'), '%Y-%d-%m').date()
+                        if start_period > end_period:
+                            args['dates_alert'] = "Please insert correct date range"
+                        if start_period and end_period:
+                            args['start'] = start_period
+                            args['end'] = end_period
+                            if calculate.dish.category == category:
+                                d = start_period
+                                custom_period = []
+                                delta = datetime.timedelta(days=1)
+                                while d <= end_period:
+                                    custom_period.append(d.strftime("%Y-%m-%d"))
+                                    d+=delta
+                                if calculate.date().strftime("%Y-%m-%d") in custom_period:
+                                    s += calculate.count
+                                    t += calculate.total()
+                                    count_of_dishes_in_categories[category] = [s, t]
+                        else:
+                            args['dates_alert'] = "Please insert correct date range"
+                    except:
+                        args['dates_alert'] = "Please insert correct date range"
             else:
                 if calculate.dish.category == category:
                     s += calculate.count
-                count_of_dishes_in_categories[category] = s
+                    t += calculate.total()
+                    args['all'] = 'all times'
+                count_of_dishes_in_categories[category] = [s, t]
+    args['counts'] = count_of_dishes_in_categories
     args['categories'] = category_list
 
     return render(request, 'personal account.html', args)

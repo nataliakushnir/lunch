@@ -80,3 +80,7 @@ class Calculate(models.Model):
     def date(self):
         calculate_date = self.order.date
         return calculate_date
+
+    def total(self):
+        total = self.count*self.dish.price
+        return total

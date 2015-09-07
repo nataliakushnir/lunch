@@ -20,15 +20,24 @@ $(document).ready(function () {
         minDate: 1,
         dateFormat: "yy-mm-dd",
         beforeShowDay: enableAllTheseDays,
-        onSelect: function(dateText) {
-        $(this).change();
-      }
+        onSelect: function (dateText) {
+            $(this).change();
+        }
     })
-    .change(function() {
-      window.location.href = "?date=" + this.value;
+        .change(function () {
+            window.location.href = "?date=" + this.value;
 
-    }).keydown(false);
+        }).keydown(false);
+
+    $('.datepick').each(function () {
+        $(this).datepicker();
 
 
+    });
+
+    $('.datepic').each(function () {
+        $(this).datepicker();
+
+    });
 
 });

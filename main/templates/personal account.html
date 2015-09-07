@@ -2,54 +2,74 @@
 {% block user_content %}
 
     <div class="col-xs-8">
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading">
-                    <h4 class="panel-title">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapse" aria-expanded="false"
-                           aria-controls="collapse">
-                            Статистика витрат
-                        </a>
-                    </h4>
-                </div>
-                <div id="collapse" class="panel-collapse collapse" role="tabpanel"
-                     aria-labelledby="heading">
-                    <div class="panel-body">
-                        <table class="table">
-                                    <caption>Замовлення за : </caption>
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Кількість</th>
-                                        <th>На суму</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for category in categories %}
-                                            <tr>
-                                                <td>{{ category }}</td>
-                                                <td>{{ q }}</td>
-                                                <td>{{ q }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading">
+                <h4 class="panel-title">
+                    <div class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                         href="#collapse" aria-expanded="false"
+                         aria-controls="collapse">
+                        Статистика витрат
                     </div>
-                </div>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <table class="table {% if dates_alert %}hidden{% endif %}">
+                    <caption>
+                        {% if month %}Замовлення за
+                            {{ month }}
+                        {% elif start %}Замовлення за
+                            {{ start }}-{{ end }}
+                        {% elif year %} Замовлення за
+                            {{ year }} рік
+                        {% elif custom_date %}{% if start %}Замовлення за
+                            {{ start }}-{{ end }}{% endif %}
+                        {% else %}Замовлення за
+                            {{ all }}
+                        {% endif %}
+                    </caption>
+                   {% if dates_alert %} <div class="alert alert-danger text-center">
+                        {{ dates_alert }}
+                    </div>{% endif %}
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Кількість</th>
+                        <th>На суму</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for category, counts in counts.items %}
+                        <tr>
+                            <td>{{ category }}</td>
+                            <td>{{ counts.0 }}</td>
+                            <td>{{ counts.1 }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
     <div class="col-xs-3 col-xs-offset-1">
         <div class="well well-sm">
             <h5 class="text-center">Get orders by</h5>
+
             <div><a href="?statistic=week">Цього тижня</a></div>
             <div><a href="?statistic=month">Цього місяця</a></div>
+            <div><a href="?statistic=year">За рік</a></div>
             <div><a href="?statistic=all">За весь період</a></div>
             <div><a href="?statistic=custom">Обрати період</a></div>
+            {% if custom_date %}
+                <form action=?statistic=custom method="post">
+                    {% csrf_token %}
+                    з: <input type="text" class="datepick" name="date_from"/>
+                    до: <input type="text" class="datepic" name="date_to"/>
+                    <br/>
+                    <br/>
+                    <input type="submit" class="btn btn-primary col-xs-12" value="Find"/>
+                </form>
+            {% endif %}
         </div>
-    </div>
-    </div>
     </div>
 {% endblock %}
 

@@ -11,6 +11,7 @@ from django.http import request
 from main.models import Order
 
 
+
 class OrderForm(forms.Form):
     # TODO replace this hardcode!
     url = 'http://localhost:8000/ajax/available-days'
@@ -66,3 +67,4 @@ class RegistrationForm(UserCreationForm):
 class ChangeUserPasswordForm(PasswordChangeForm):
     password = forms.CharField(min_length=3,
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+
