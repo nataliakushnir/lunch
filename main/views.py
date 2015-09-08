@@ -1,20 +1,13 @@
 import datetime
-from datetime import date
 from django.contrib import auth
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
 from django.core.context_processors import csrf
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render, resolve_url
-from django.template.response import TemplateResponse
+from django.shortcuts import redirect, render
 from django.utils.decorators import decorator_from_middleware_with_args
-from .forms import OrderForm, LoginUserForm, RegistrationForm, ChangeUserPasswordForm
+from .forms import OrderForm, LoginUserForm, RegistrationForm
 from main.messages import SendMessage
 from .models import Order, Dish, Calendar, Calculate, Category
 from middlewares import CustomAuthMiddleware
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import date, timedelta as td
 only_auth = decorator_from_middleware_with_args(CustomAuthMiddleware)
 
 
@@ -64,11 +57,12 @@ def new(request):
     args['new_order'] = new_order
     args['categories'] = category_info
     args['user'] = auth.get_user(request)
-    try:
-        if args['alert_success'] is not None:
-            SendMessage.order_success(request)
-    except:
-        pass
+    # TODO change SMTP server
+    # try:
+    #     if args['alert_success'] is not None:
+    #         SendMessage.order_success(request)
+    # except:
+    #     pass
     return render(request, 'new.html', args)
 
 
@@ -136,7 +130,9 @@ def register(request):
             new_user = auth.authenticate(username=register_form.cleaned_data['username'],
                                          password=register_form.cleaned_data['password2'], )
             auth.login(request, new_user)
-            SendMessage.register_success(request)
+
+            # TODO change SMTP server
+            # SendMessage.register_success(request)
             return redirect('new_order')
         else:
             args['custom_error'] = register_form
@@ -251,34 +247,3 @@ def private(request):
     args['categories'] = category_list
 
     return render(request, 'personal account.html', args)
-
-
-def password_change(request,
-                    template_name='personal account.html',
-                    post_change_redirect=None,
-                    password_change_form=PasswordChangeForm,
-                    extra_context=None):
-    if post_change_redirect is None:
-        post_change_redirect = reverse('password_change_done')
-    else:
-        post_change_redirect = resolve_url(post_change_redirect)
-    if request.method == "POST":
-        form = password_change_form(user=request.user, data=request.POST)
-        if form.is_valid():
-            form.save()
-            # Updating the password logs out all other sessions for the user
-            # except the current one if
-            # django.contrib.auth.middleware.SessionAuthenticationMiddleware
-            # is enabled.
-            update_session_auth_hash(request, form.user)
-            return HttpResponseRedirect(post_change_redirect)
-    else:
-        form = password_change_form(user=request.user)
-    context = {
-        'form': form,
-        'title': _('Password change'),
-    }
-    if extra_context is not None:
-        context.update(extra_context)
-
-    return TemplateResponse(request, template_name, context)
