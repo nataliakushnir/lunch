@@ -1,5 +1,6 @@
 import json
 from time import strftime
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 import datetime
 from main.models import Order, Calendar
@@ -15,6 +16,7 @@ def available_days(request):
     orders_days = []
     orders = Order.objects.all()
     for order in orders:
-        orders_days.append(order.date.strftime('%Y-%m-%d'))
+        if order.user==request.user:
+            orders_days.append(order.date.strftime('%Y-%m-%d'))
     dates = list(set(week) - set(orders_days))
     return HttpResponse(json.dumps(dates), content_type='application/json')

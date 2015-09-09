@@ -22,13 +22,13 @@
     <form action="/login/" method="post">
         {% csrf_token %}
 
-        {% for field in login_form.visible_fields %}
-
-            {% if field.errors %}
+            {% if custom_error %}
                 <div class="alert alert-danger">
-                    <p>{{ field.errors }}</p>
+                    <p>{{ custom_error }}</p>
                 </div>
             {% endif %}
+
+        {% for field in login_form.visible_fields %}
 
             {{ field }}
             <br/>

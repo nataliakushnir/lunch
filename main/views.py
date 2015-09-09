@@ -33,7 +33,6 @@ def new(request):
                     count = request.POST['count_' + str(item_id)]
                     Calculate.objects.create(order=order, dish=Dish.objects.get(id=item_id), count=count)
                     args['alert_success'] = "Your order created successfully!"
-                    OrderForm.dates.remove(str(order.date))
                 else:
                     args['custom_alert'] = "Any item not selected"
     new_order = OrderForm(request.GET)
@@ -41,7 +40,11 @@ def new(request):
     if request.GET:
         date = request.GET.get('date')
         dishes_for_date = Calendar.objects.filter(date=date)
-        if date in OrderForm.dates:
+        dates_list = []
+        for calendar in Calendar.objects.all():
+            if calendar.date.strftime("%Y-%m-%d") not in dates_list:
+                dates_list.append(calendar.date.strftime("%Y-%m-%d"))
+        if date in dates_list:
             for dish in dishes_for_date:
                 info.append(dish.dish)
         else:
