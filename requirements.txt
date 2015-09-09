@@ -1,0 +1,3 @@
+django==1.8
+django-bootstrap3
+python-dateutil==2.4.2

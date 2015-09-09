@@ -62,9 +62,3 @@ class RegistrationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
-
-
-class ChangeUserPasswordForm(PasswordChangeForm):
-    password = forms.CharField(min_length=3,
-                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
-
